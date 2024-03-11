@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='image/icons8-facebook-48.png') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+	<link rel="stylesheet" href="{{url_for('static', filename='bootstrap-icons/bootstrap-icons.css')}}">
+  <script defer src="{{url_for('static', filename='bootstrap.bundle.js')}}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"
+  integrity="sha512-skuhu6jj+sQnhLq1Txsack8VfnIrX8wL+MTFilYlFFT/NuLJm7eya7zOROs39Jy5cjASMEWqxLzijRVmKhsqWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>FaceVconnect</title>
+</head>
+<body>
+<section class="nav">
+   <div class="logoinput">
+    <img src="{{url_for('static', filename='image/icons8-facebook-48.png')}}" alt="">
+    <i class="bi bi-search"></i>
+    <input type="search" id="searchInput"  name="search" placeholder="Search Facebook" onkeyup="searchUser()"> <!-- add an onkeyup event listener to the input -->
+   </div>
+   <ul id="searchResult" style="display: none;">
+       <!-- create a list element for the autocomplete suggestions -->
+       
+   </ul>
+   <ul class="navigation">
+     <li><a href="/"  class="bi bi-house-fill"></a></li>
+     <li><a href="/video" class="bi bi-collection-play-fill"></a></li>
+      <li><a href="/users" class="bi bi-people-fill"></a></li>
+      <li><a href="/about" class="bi bi-palette-fill"></a></li>
+   </ul>
+   <div class="messageprof">
+    <a href="/message ">
+     <div class="circle ">
+        <a href="/message" class="bi bi-messenger"></a>   
+     </div>
+    </a>
+     <div class="circle ">
+          <a href="/" class="bi bi-bell-fill"></a>
+     </div>
+     <button id="dark-mode-toggle" class="circle-none" ><i class="bi bi-moon-fill"></i></button>
+     <div class="circle circle-none ">
+       <a href="/logout" class="bi bi-door-open-fill"></a>
+     </div>
+     <div class="circle">
+   
+     <a href="/profile">
+      {% if profile%}
+      <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+     {%else%}
+       <a href="/profile" class="bi bi-person-fill"></a>
+      {% endif %}
+      </a>
+
+     </div>
+     <div   class=" angle nav-link " href="#"  data-bs-toggle="dropdown" aria-expanded="false">
+       <i class="bi bi-chevron-down"></i>
+     </div>
+     <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="{{url_for('friends', user_id =user_id)}}">    <img src="{{url_for('static' , filename='image/icons8-friends-60.png')}}" alt="">Friends</a></li>
+      <li><a class="dropdown-item" href="#"><img src="{{url_for('static' , filename='image/icons8-picture-1098.png')}}" width="40px" height="40px" alt="">Feeds</a></li>
+      <li><a class="dropdown-item" href="#">
+        <i class="bi bi-clock-fill text-primary   fs-1 "></i>Memories</a></li>
+      <li><a class="dropdown-item" href="#"> <div class="bookmark">
+        <i class="bi bi-bookmark-fill"></i>  
+     </div>About/Recom</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li style="display:flex; align-items:center; justify-content:space-between; padding-left:15px;"><span>Dark-mode</span><button id="dark-mode-toggle" class="circle" ><i class="bi bi-moon-fill"></i></button></li>
+      <li style="display:flex; align-items:center; justify-content:space-between;">
+        <a class="dropdown-item" href="#">LOG-OUT</a>
+        <div class="circle" style="padding: 25px;">
+          <a href="/logout" class="bi bi-door-open-fill"></a>
+        </div>
+      </li>
+    </ul>
+   </div>
+</section>
+  <section class="homemobile">
+     <div class="home">
+      <li><a href="/" class="bi bi-house-fill"></a></li>
+     </div>
+     <div class="video">
+       <li><a href="/video"  class="bi bi-collection-play-fill"></a></li>
+     </div>
+     <div class="friends">
+        <li><a href="/users"  class="bi bi-people-fill"></a></li>
+     </div>
+     <div class="about">
+      <li><a href="/about" class="bi bi-palette-fill"></a></li>
+     </div>
+  </section>
+<!-- navbar section -->
+<div class="container-fluid   layout d-flex align-items-center justify-content-between  ">
+ <div class="sec friend-request">
+    <div class="access">
+      <div class=" d-flex m-1 ">
+        <div class="circle">
+         <a href="/profile">
+            {% if profile%}
+            <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+           {%else%}
+             <a href="/profile" class="bi bi-person-fill"></a>
+            {% endif %}
+            </a>
+       </div>
+        <span class="mt-4 "><a href="/profile">{{username}} {{user.surname}}</a></span>
+      </div>  
+       <div class="d-flex m-3">
+          <img src="{{url_for('static' , filename='image/icons8-friends-60.png')}}" alt="">
+          <span class="mt-3 m-2"><a href="{{url_for('friends', user_id =user_id)}}">Friends</a></span>
+       </div>
+       <div class="d-flex m-3">
+        <img src="{{url_for('static' , filename='image/icons8-picture-1098.png')}}" alt="">
+        <span class="mt-3 m-2"><a href="/">Feeds</a></span>
+      </div>
+     <div class="d-flex m-3 align-items-center">
+        <div class="play">
+          <i class="bi bi-play-fill"></i>
+        </div>
+        <span class="mt-3 m-2"><a href="/video">Video</a></span>
+     </div>
+     <div class="d-flex m-3 align-items-center ">
+        <div class="alarm">
+          <i class="bi bi-clock-fill"></i>
+        </div>
+        <span class="mt-3 m-2"><a href="/">Memories</a></span>
+     </div>
+     <div class="d-flex m-3 align-items-center ">
+        <div class="bookmark">
+           <i class="bi bi-bookmark-fill"></i>  
+        </div>
+        <span class="mt-3 m-2"><a href="/">Recommendation and about</a></span>
+     </div>
+     <div class=" d-flex m-1 bottom">
+        <div class="circle">
+            <i href="/" class="bi bi-chevron-down"></i>
+        </div>
+        <span class="mt-4 "><a href="/">see more</a></span>
+      </div>  
+    </div>
+ </div>
+ <!-- layout left -->
+ <div class="sec">
+    <div class="post">
+     <div class="postint">
+      <div class="circle">
+         <a href="/profile">
+          {% if profile%}
+          <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+         {%else%}
+           <a href="/profile" class="bi bi-person-fill"></a>
+          {% endif %}
+          </a>
+         </div>
+        <input type="button" class=" text-left"  data-bs-toggle="modal"  class="btn btn-primary"  data-bs-target="#exampleModal" value="what is on your mind {{username}}" placeholder="what is on your mind josephine">
+    </div>
+  <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content    intomodal">
+        <div class="modal-header  intomodal">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body  intomodal">
+          <form class="postaction" action="/upload_vid" method="post" enctype="multipart/form-data">
+            <label for="filename">Select a video to upload:</label>
+            <input type="file" id="filename" name="filename" multiple accept="video/mp4,video/x-matroska" required>
+            <small>Accepted file types: .mp4, .mkv</small>
+            <br>  
+            <div id="video-container"></div>
+            <button type="submit">Upload</button>
+        </form>
+        
+       
+        
+   
+        
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+    </div>
+       <div class="postitem">
+         <div class="video">
+            <i class="bi bi-camera-video-fill"></i>
+            <p>video</p>
+         </div>
+         <div class="images">
+            <i class="bi bi-images"></i>
+            <p>photo</p>
+         </div>
+         <div class="images">
+            <p>😊</p>
+            <p>Feeling</p>
+         </div>
+       </div>
+    </div>
+    {% for profile in profile_updates %}
+    <div class="posted">
+        <div class="VIEW">
+            <div class="circle">
+                <a href="/profile">
+                    {% if profile %}
+                        <img id="myImg" class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}" alt="Profile Picture">
+                    {% else %}
+                        <a href="/profile" class="bi bi-person-fill"></a>
+                    {% endif %}
+                </a>
+            </div>
+            <p>{{ profile.user.username }}</p>
+        </div> 
+        {% if profile %}
+            <!-- Check if the profile picture was updated within the last 5 minutes -->
+            {% if datetime.now() - profile.timestamp <= timedelta(minutes=5) %}
+                <p>{{ profile.user.username }} updated profile photo at {{ profile.timestamp.strftime('%Y-%m-%d %H:%M') }} </p>
+            {% endif %}
+            <!-- Use the template variable to set the profile picture size -->
+            <img src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}" width="{{ profile_pic_size }}px" height="{{ profile_pic_size }}px">
+            <div class="upinteract">
+                <!-- Display the update... -->
+                <a class="like-button" data-id="{{ profile.id }}">
+                    <i class="bi bi-hand-thumbs-up"></i><span>like</span>
+                </a>
+                <a href="/commentdetails/{{ update.id }}">
+                    <span>Comments</span>
+                </a>
+                <a href="#">
+                    <span>endorse</span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+
+
+
+{% for cover in covers %}
+{% for profile in profile_updates %}
+<div class="posted">
+   <div class="VIEW">
+    <div class="circle">
+       {%if profile%}
+        <img src=" {{ url_for('uploaded_file', filename=profile.profile_pic) }}">
+        {%else%}
+        <a href="/profile" class="bi bi-person-fill"></a> 
+        {%endif%}
+        </div>
+      <p>{{cover.user.username}}</p>
+     </div> 
+  {% if cover %}
+  <!-- Display the username and the timestamp of the cover photo update -->
+  <p>{{ cover.user.username }} updated cover photo at {{ cover.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+  <!-- Use the template variable to set the cover photo size -->
+  <img src="{{ url_for('uploaded_file', filename=cover.cover_pic) }}" width="{{ profile_pic_size }}px" height="{{ profile_pic_size }}px">
+  </div>
+  {% endif %}
+  {%endfor%}
+{% endfor %}
+{% for video in videoquery %}
+<div class="posted">
+   <div class="VIEW">
+      <div class="circle">
+         <a href="/profile">
+   {% if not video.profile_pic %}
+         <a href="/profile" class="bi bi-person-fill"></a> 
+    {%endif%} 
+    {%if video.profile_pic%}
+         <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=video.profile_pic) }}"  alt="Profile Picture">
+      {% endif %}
+          </a>
+      </div>
+       <p>{{video.user.username}}</p>
+   </div> 
+
+  {% if video %}
+  <!-- Display the filename and the timestamp of the video upload -->
+
+  <!-- Display the video -->
+  <video class="video"   width="100%" height="240px" controls >
+    <source src="{{ url_for('static', filename='video/' + video.filename) }}" type="video/mp4">
+    Your browser does not support videos.
+  </video>
+  </div>
+  {% endif %} 
+{% endfor %}
+
+
+
+    
+ 
+
+
+ </div>
+ <!-- layout-center -->
+ <div class="sec friend-request">
+   
+<!-- Friend Requests -->
+ <div id="friend-requests">
+   {% if friend_requests %}
+     {% for request in friend_requests %}
+     <div class="friend-request" data-request-id="{{ request.request_id }}">
+       <img src="{{url_for('uploaded_file', filename=request.profile_pic)}}" alt="{{ request.username }}'s profile picture">
+       <p>{{ request.username }} wants to be your friend.</p>
+       <button class="accept">Accept</button>
+       <button class="reject">Reject</button>
+     </div>
+     {% endfor %}
+   {% else %}
+     <p>You don't have a friend request.</p>
+   {% endif %}
+  </div>
+ 
+ 
+ 
+ <!-- User Profile Updates -->
+ {% for user in users %}
+ <div class="user-profile" data-user-id="{{ user.id }}">
+   <h2>{{ user.username }}</h2>
+   <!-- Display profile updates -->
+   {% for info in profile_info %}
+     {% if info.startswith(user.username) %}
+     <p>{{ info }}</p>
+     {% endif %}
+   {% endfor %}
+   <!-- Display cover updates -->
+   {% for info in cover_info %}
+     {% if info.startswith(user.username) %}
+     <p>{{ info }}</p>
+     {% endif %}
+   {% endfor %}
+ </div>
+ {% endfor %}
+
+</div>
+<!-- layout -->
+</body>
+<script src="{{ url_for('static', filename='jquery-3.7.1.min.js') }}"></script>
+<script  src="{{url_for('static', filename='script.js')}}"></script>
+<script>
+  $(document).ready(function(){
+    // Handle accept and reject buttons
+    $(document).on('click', '.accept, .reject', function(){
+      var requestId = $(this).closest('.friend-request').data('request-id');
+      var response = $(this).hasClass('accept') ? 'accept' : 'reject';
+      $.ajax({
+        url: '/respond_friend_request/' + requestId,
+        type: 'POST',
+        data: {'response': response},
+        success: function(response){
+          alert(response.message);
+          location.reload();  // Reload the page to update the list of friend requests
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
+  });
+
+
+// Create an intersection observer
+
+
+
+
+$(document).ready(function() {
+  // Get the initial like status and count from local storage
+  var likeStatus = JSON.parse(localStorage.getItem('likeStatus')) || {};
+  var likeCount = JSON.parse(localStorage.getItem('likeCount')) || {};
+
+  // Loop through each like button and set the icon and count according to local storage
+  $('.like-button').each(function() {
+    var update_id = $(this).data('id');
+    var icon = $(this).children('i');
+    var likeCountElement = $(this).children('.like-count');
+    // Check if likeCount[update_id] is defined, if not, set it to 0
+    likeCount[update_id] = likeCount[update_id] || 0;
+    if (likeStatus[update_id]) {
+      // If the user has liked this update, set the icon to filled and the count to local storage value
+      icon.removeClass('bi-hand-thumbs-up').addClass('bi-hand-thumbs-up-fill');
+    } else {
+      // If the user has not liked this update, set the icon to empty and the count to local storage value or zero
+      icon.removeClass('bi-hand-thumbs-up-fill').addClass('bi-hand-thumbs-up');
+    }
+    likeCountElement.text(likeCount[update_id] + ' likes');
+  });
+
+  // Handle the click event of the like button
+  $('.like-button').click(function(e) {
+    e.preventDefault();
+    var update_id = $(this).data('id');
+    var icon = $(this).children('i');
+    var likeCountElement = $(this).children('.like-count');
+    $.ajax({
+      url: '/like/' + update_id,
+      type: 'POST',
+      data: { 'user_id': '{{ user.id }}' },
+      success: function(response) {
+        // Toggle the icon class on success
+        if (icon.hasClass('bi-hand-thumbs-up')) {
+          icon.removeClass('bi-hand-thumbs-up').addClass('bi-hand-thumbs-up-fill');
+        } else {
+          icon.removeClass('bi-hand-thumbs-up-fill').addClass('bi-hand-thumbs-up');
+        }
+        // Update the like count on the page and in local storage
+        likeCount[update_id] = response.new_like_count;
+        likeCountElement.text(likeCount[update_id] + ' likes');
+        likeStatus[update_id] = !likeStatus[update_id];
+        localStorage.setItem('likeStatus', JSON.stringify(likeStatus));
+        localStorage.setItem('likeCount', JSON.stringify(likeCount));
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  });
+});
+
+
+</script>
+<script defer>
+
+  var videos = document.querySelectorAll('video');
+  window.addEventListener('scroll', function() {
+  videos.forEach(video => {
+    var rect = video.getBoundingClientRect();
+     if(rect.top >= 0 && rect.bottom <= window.innerHeight) {
+      video.play();
+     } else {
+       video.pause();
+     }
+   });});
+  videos.forEach(video => {  video.addEventListener('play', function() {
+     videos.forEach(v => {
+      if(v != this) v.pause();
+    });
+   });
+  });
+
+  
+const input = document.getElementById('filename');
+const videoContainer = document.getElementById('video-container');
+
+input.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const video = document.createElement('video');
+    video.src = URL.createObjectURL(file);
+    video.controls = true;
+    video.width = 400;
+    video.height = 360;
+    videoContainer.appendChild(video);
+});
+</script>
+</html>

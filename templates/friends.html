@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='image/icons8-facebook-48.png') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+	<link rel="stylesheet" href="{{url_for('static', filename='bootstrap-icons/bootstrap-icons.css')}}">
+    <title>Facebook</title>
+    <title>Friends</title>
+</head>
+<body>
+    {% if friends %}
+    {% for friend in friends %}
+    <div>
+        {{ friend.username }}
+        {% if friend.profile %}
+        <img src="{{ url_for('uploaded_file', filename=friend.profile) }}" width="30%" height="30%">
+        {% endif %}
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+</body>
+</html>

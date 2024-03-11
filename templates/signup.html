@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='image/icons8-facebook-48.png') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap-icons/bootstrap-icons.css')}}">
+    <title>Create an Account</title>
+</head>
+
+
+
+<body>
+    <section class=" container-fluid    d-flex align-items-center justify-content-center flex-column     ">
+        <h2 class="text-primary m-4  fs-1">faceVconnect</h2>
+        {% with messages = get_flashed_messages() %}
+        {%if messages%}
+        {%for msg in messages%}
+          <p class="flashlogout">{{msg}} </p>
+        {%endfor%}
+        {%endif%}
+      {% endwith%}
+        <form action="/signup" class="signup bg-white p-3 d-flex flex-column align-items-center   " method="POST">
+            <h4 class="text-center m-2">Create a new account</h4>
+            <p class="text-center ">Its quick and easy.</p>
+            <hr>
+            <div class="d-flex align-align-items-center ">
+                <input class="m-1 p-1"  name="username" placeholder="First name" type="name">
+                <input class="m-1 p-1"  type="text" name="surname" placeholder="Surname">
+            </div>
+            <div>
+                <input class="singleinput m-1 p-1 "  type="email" name="email" placeholder="Email Address">
+            </div>
+
+            <div>
+                <input class="singleinput m-1 p-1" type="password" name="password" placeholder="New Password">
+            </div>
+            <div>
+            <label class="m-1">Date of Birth <i class="bi bi-question-circle-fill"></i></label>
+            </div>
+            <div>
+                <input class="singleinput m-1 p-1" type="date" name="date" id="date" placeholder="Date">
+            </div>
+          <div>
+            <label class="m-1">Gender<i class="bi bi-question-circle-fill"></i></label>
+          </div> 
+            <div class="d-flex align-items-center justify-content-between px-3 my-2 ">
+             <span class="Female d-flex align-items-center justify-content-between p-1 m-1">
+                <label class="mx-1">Female</label>
+                <input type="radio" name="gender" value="female" id="female" placeholder="female" >
+             </span>
+             <span class="Male d-flex align-items-center justify-content-between p-1 m-1">
+                <label class="mx-1">Male</label>
+                <input type="radio" name="gender" value="male" placeholder="female" >
+             </span>
+             <span class="Custom d-flex  align-items-center justify-content-between p-1 m-1">
+                <label class="mx-1">Custom</label>
+                <input type="radio" name="gender" value="custom"  placeholder="female" >
+             </span>
+            </div>
+            <div class="d-flex align-items-center  justify-content-center ">
+             <button type="submit" class=" bg-primary text-white fw-bold">Sign up</button>
+            </div>
+            <div class="d-flex align-items-center  justify-content-center m-2">
+                <a class="fw-bolder" href="/signin">Already have an account?</a>
+            </div>
+        </form>
+    </section>
+</body>
+<script src="{{url_for('static', filename='script.js')}}"></script>
+
+</html>

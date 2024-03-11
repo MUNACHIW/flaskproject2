@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='image/icons8-facebook-48.png') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+	<link rel="stylesheet" href="{{url_for('static', filename='bootstrap-icons/bootstrap-icons.css')}}">
+    <title>{{user.username}}</title>
+</head>
+<body>
+  <section class="nav">
+    <div class="logoinput">
+     <img src="{{url_for('static', filename='image/icons8-facebook-48.png')}}" alt="">
+     <i class="bi bi-search"></i>
+     <input type="search" id="searchInput"  name="search" placeholder="Search Facebook" onkeyup="searchUser()"> <!-- add an onkeyup event listener to the input -->
+    </div>
+    <ul id="searchResult" style="display: none;">
+        <!-- create a list element for the autocomplete suggestions -->
+        
+    </ul>
+    <ul class="navigation">
+      <li><a href="/"  class="bi bi-house-fill"></a></li>
+      <li><a href="/video" class="bi bi-collection-play-fill"></a></li>
+       <li><a href="/group" class="bi bi-people-fill"></a></li>
+       <li><a href="/about" class="bi bi-palette-fill"></a></li>
+    </ul>
+    <div class="messageprof">
+      <div class="circle">
+         <a href="/" class="bi bi-messenger"></a>   
+      </div>
+      <div class="circle">
+           <a href="/" class="bi bi-bell-fill"></a>
+      </div>
+      <button id="dark-mode-toggle" ><i class="bi bi-moon-fill"></i></button>
+      <div class="circle">
+        <a href="/logout" class="bi bi-door-open-fill"></a>
+      </div>
+      <div class="circle">
+      <a href="/profile">
+       {% if profile%}
+       <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+      {%else%}
+        <a href="/profile" class="bi bi-person-fill"></a>
+       {% endif %}
+       </a>
+      </div>
+    </div>
+ </section>
+  <div class="profile-area">
+      <div class="cover" >
+        {%if cover%}
+         <img id="cover-photo" src="{{url_for('uploaded_file', filename=cover.cover_pic)}}"  alt="profilepicture">
+        {%else%}
+        <i class="bi bi-images"></i>
+        {% endif %}
+      <div class="change-cover" onclick=" coverinput()">
+        <i class="bi bi-camera-fill"></i>
+        <span>Edit Cover Photo</span>
+        <div class="inputcover">
+          <form action="/updatecover" method="post" enctype="multipart/form-data">
+            <input type="file" name="cover" id="upload-cover" placeholder="coverphoto" onchange="previewCover(event)">
+            <img id="cover-preview" src="" alt="Image Preview" style="display: none;" width="100%" height="100%">
+            <button type="submit">Update</button>
+          </form>
+        </div>
+      </div>
+     
+      </div>
+    <div class="profile">
+       <div class="profileimage">
+        {% if profile%}
+           <img class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+        {%else%}
+         <i class="bi bi-person-fill"></i>
+        {%endif%}
+          <button class="camera" id="cameraFeed" onclick="toggleInput()">
+             <i class="bi bi-camera-fill"></i>
+             <span class="change"></span>
+          </button>
+          <div id="inputprofile" class="inputprofile" >
+          <form action="/update" method="post"  enctype="multipart/form-data">
+            <input type="file" name="file" id="upload-picture"  placeholder="pictures" onchange="previewImage(event)">
+            <img id="image-preview" src="" alt="Image Preview" style="display: none;" width="100%" height="100%">
+            <button type="submit">Update</button>
+          </form>
+        </div>
+      </div>
+        <div class="username">
+           <p>{{user.username}}</p>
+           <span>friends 132</span>
+        </div>
+    </div>
+    <div class="profileattri">
+       <a href="/">Post</a>
+       <a href="/">About</a>
+       <a href="/">Photos</a>
+       <a href="/">Videos</a>
+       <a href="/">Groups</a>
+    </div>
+  </div>
+
+
+  <div class="review ">
+     <div class="sec_intro">
+      <div class="intro_box">
+  
+      </div>
+      <div class="intro_box">
+  
+      </div>
+      <div class="intro_box">
+  
+      </div>
+     </div>
+     <div class=" sec_post">
+      <div class="post inito">
+        <div class="postint">
+         <div class="circle">
+            <a href="/profile">
+             {% if profile%}
+             <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+            {%else%}
+              <a href="/profile" class="bi bi-person-fill"></a>
+             {% endif %}
+             </a>
+            </div>
+           <input type="button" class=" text-left" value="what is on your mind {{user.username}}" placeholder="what is on your mind josephine">
+       </div>
+          <div class="postitem">
+            <div class="video">
+               <i class="bi bi-camera-video-fill"></i>
+               <p>video</p>
+            </div>
+            <div class="images">
+               <i class="bi bi-images"></i>
+               <p>photo</p>
+            </div>
+            <div class="images">
+               <p>😊</p>
+               <p>Feeling</p>
+            </div>
+          </div>
+          <form class="postaction" action="/upload_vid" method="post"  enctype="multipart/form-data">
+            <input type="file" name="filename" multiple required>
+            <button type="submit">post</button>
+        </form>
+       </div>
+      {%for profile in profile_updates %}
+      <div class="post_box">
+        <div class="VIEW">
+          <img src=" {{ url_for('uploaded_file', filename=profile.profile_pic) }}">
+          <p>{{profile.user.username}}</p>
+       </div> 
+         {% if profile %}
+         <!-- Check if the profile picture was updated within the last 5 minutes -->
+         <!-- Loop through the profile_info list to display all recent updates -->
+         <p>{{profile.user.username }} updated profile photo at {{ profile.timestamp.strftime('%Y-%m-%d %H:%M') }} </p
+         <!-- Use the template variable to set the profile picture size -->
+         <img class="up" src=" {{ url_for('uploaded_file', filename=profile.profile_pic) }}" width="100%" height="{{profile_pic_size}}px" >
+       </div>
+      {%endif%}
+      {% endfor%}
+      {% for profile in profile_updates %}
+      {% for cover in covers %}
+      <div class="post_box">
+        <div class="VIEW">
+         <div class="circle"> 
+          {%if profile%}
+          <img src=" {{ url_for('uploaded_file', filename=profile.profile_pic) }}">
+          {%else%}
+          <a href="/profile" class="bi bi-person-fill"></a> 
+          {%endif%}
+         </div>
+          <p>{{cover.user.username}}</p>
+         </div> 
+      {% if cover %}
+      <!-- Display the username and the timestamp of the cover photo update -->
+      <p>{{ cover.user.username }} updated cover photo at {{ cover.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+      <!-- Use the template variable to set the cover photo size -->
+      <img class="up" src="{{ url_for('uploaded_file', filename=cover.cover_pic) }}" width="100%" height="{{ profile_pic_size }}px">
+      </div>
+      {%endif%}
+      {%endfor%}
+      {%endfor%}
+      {% for video in videoquery %}
+      <div class="posted">
+         <div class="VIEW">
+            <div class="circle">
+               <a href="/profile">
+         {% if not video.profile_pic %}
+               <a href="/profile" class="bi bi-person-fill"></a> 
+          {%endif%} 
+          {%if video.profile_pic%}
+               <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=video.profile_pic) }}"  alt="Profile Picture">
+            {% endif %}
+                </a>
+            </div>
+             <p>{{video.user.username}}</p>
+         </div> 
+      
+        {% if video %}
+        <!-- Display the filename and the timestamp of the video upload -->
+      
+        <!-- Display the video -->
+        <video class="video"   width="100%" height="240px" controls >
+          <source src="{{ url_for('static', filename='video/' + video.filename) }}" type="video/mp4">
+          Your browser does not support videos.
+        </video>
+        </div>
+        {% endif %} 
+      {% endfor %}
+     </div>
+
+  
+  </div>
+</body>
+<script src="{{url_for('static', filename='script.js')}}"></script>
+<script>
+  
+</script>
+</html>

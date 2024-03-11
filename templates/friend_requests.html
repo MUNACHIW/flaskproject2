@@ -1,0 +1,65 @@
+<!-- Friend Requests -->
+<div id="friend-requests">
+  {% if friend_requests %}
+    {% for request in friend_requests %}
+    <div class="friend-request" data-request-id="{{ request.request_id }}">
+      <img src="{{url_for('uploaded_file', filename=request.profile_pic)}}" alt="{{ request.username }}'s profile picture">
+      <p>{{ request.username }} wants to be your friend.</p>
+      <button class="accept">Accept</button>
+      <button class="reject">Reject</button>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p>You don't have a friend request.</p>
+  {% endif %}
+</div>
+
+
+
+<!-- User Profile Updates -->
+{% for user in users %}
+<div class="user-profile" data-user-id="{{ user.id }}">
+  <h2>{{ user.username }}</h2>
+  <!-- Display profile updates -->
+  {% for info in profile_info %}
+    {% if info.startswith(user.username) %}
+    <p>{{ info }}</p>
+    {% endif %}
+  {% endfor %}
+  <!-- Display cover updates -->
+  {% for info in cover_info %}
+    {% if info.startswith(user.username) %}
+    <p>{{ info }}</p>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endfor %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    // Handle accept and reject buttons
+    $(document).on('click', '.accept, .reject', function(){
+      var requestId = $(this).closest('.friend-request').data('request-id');
+      var response = $(this).hasClass('accept') ? 'accept' : 'reject';
+      $.ajax({
+        url: '/respond_friend_request/' + requestId,
+        type: 'POST',
+        data: {'response': response},
+        success: function(response){
+          alert(response.message);
+          location.reload();  // Reload the page to update the list of friend requests
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+  

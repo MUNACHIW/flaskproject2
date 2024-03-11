@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='image/icons8-facebook-48.png') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+	<link rel="stylesheet" href="{{url_for('static', filename='bootstrap-icons/bootstrap-icons.css')}}">
+    <script defer src="{{url_for('static', filename='bootstrap.bundle.js')}}"></script>
+    <title>Facebook</title>
+</head>
+<body>
+    <section class="nav">
+        <div class="logoinput">
+         <img src="{{url_for('static', filename='image/icons8-facebook-48.png')}}" alt="">
+         <i class="bi bi-search"></i>
+         <input type="search" id="searchInput"  name="search" placeholder="Search Facebook" onkeyup="searchUser()"> <!-- add an onkeyup event listener to the input -->
+        </div>
+        <ul id="searchResult" style="display: none;">
+            <!-- create a list element for the autocomplete suggestions -->
+            
+        </ul>
+        <ul class="navigation">
+          <li><a href="/"  class="bi bi-house-fill"></a></li>
+          <li><a href="/video" class="bi bi-collection-play-fill"></a></li>
+           <li><a href="/group" class="bi bi-people-fill"></a></li>
+           <li><a href="/about" class="bi bi-palette-fill"></a></li>
+        </ul>
+        <div class="messageprof">
+          <div class="circle">
+             <a href="/" class="bi bi-messenger"></a>   
+          </div>
+          <div class="circle">
+               <a href="/" class="bi bi-bell-fill"></a>
+          </div>
+          <button id="dark-mode-toggle" ><i class="bi bi-moon-fill"></i></button>
+          <div class="circle">
+            <a href="/logout" class="bi bi-door-open-fill"></a>
+          </div>
+          <div class="circle">
+          <a href="/profile">
+           {% if profile%}
+           <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+          {%else%}
+            <a href="/profile" class="bi bi-person-fill"></a>
+           {% endif %}
+           </a>
+          </div>
+        </div>
+     </section>
+     <!-- navbar section -->
+     <div class="container-fluid   layout d-flex align-items-center justify-content-between  ">
+      <div class="sec">
+         <div class="access">
+           <div class=" d-flex m-1 ">
+             <div class="circle">
+              <a href="/profile">
+                 {% if profile%}
+                 <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+                {%else%}
+                  <a href="/profile" class="bi bi-person-fill"></a>
+                 {% endif %}
+                 </a>
+            </div>
+             <span class="mt-4 "><a href="/profile">{{username}} {{user.surname}}</a></span>
+           </div>  
+            <div class="d-flex m-3">
+               <img src="{{url_for('static' , filename='image/icons8-friends-60.png')}}" alt="">
+               <span class="mt-3 m-2"><a href="{{url_for('friends', user_id =user_id)}}">Friends</a></span>
+            </div>
+            <div class="d-flex m-3">
+             <img src="{{url_for('static' , filename='image/icons8-picture-1098.png')}}" alt="">
+             <span class="mt-3 m-2"><a href="/">Feeds</a></span>
+           </div>
+          <div class="d-flex m-3 align-items-center">
+             <div class="play">
+               <i class="bi bi-play-fill"></i>
+             </div>
+             <span class="mt-3 m-2"><a href="/">Video</a></span>
+          </div>
+          <div class="d-flex m-3 align-items-center ">
+             <div class="alarm">
+               <i class="bi bi-clock-fill"></i>
+             </div>
+             <span class="mt-3 m-2"><a href="/">Memories</a></span>
+          </div>
+          <div class="d-flex m-3 align-items-center ">
+             <div class="bookmark">
+                <i class="bi bi-bookmark-fill"></i>  
+             </div>
+             <span class="mt-3 m-2"><a href="/">Save</a></span>
+          </div>
+          <div class=" d-flex m-1 bottom">
+             <div class="circle">
+                 <i href="/" class="bi bi-chevron-down"></i>
+             </div>
+             <span class="mt-4 "><a href="/">see more</a></span>
+           </div>  
+         </div>
+      </div>
+   
+
+
+
+        <!-- layout left -->
+ <div class="sec">
+    <div class="post">
+     <div class="postint">
+      <div class="circle">
+         <a href="/profile">
+          {% if profile%}
+          <img  id="myImg"  class="userimages" src="{{ url_for('uploaded_file', filename=profile.profile_pic) }}"  alt="Profile Picture">
+         {%else%}
+           <a href="/profile" class="bi bi-person-fill"></a>
+          {% endif %}
+          </a>
+         </div>
+        <input type="button" class=" text-left"  data-bs-toggle="modal"  class="btn btn-primary"  data-bs-target="#exampleModal" value="what is on your mind {{username}}" placeholder="what is on your mind josephine">
+    </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="postaction" action="/upload_vid" method="post"  enctype="multipart/form-data">
+            <input type="file" name="filename" multiple  required>
+            <button type="submit">post</button>
+        </form> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+    </div>
+       <div class="postitem">
+         <div class="video">
+            <i class="bi bi-camera-video-fill"></i>
+            <p>video</p>
+         </div>
+         <div class="images">
+            <i class="bi bi-images"></i>
+            <p>photo</p>
+         </div>
+         <div class="images">
+            <p>😊</p>
+            <p>Feeling</p>
+         </div>
+       </div>
+    </div> 
+    {% if profile_updates %}
+    <div class="posted">
+        <div class="VIEW">
+            <div class="circle">
+                <a href="/profile">
+                    {% if profile_updates %}
+                        <img id="myImg" class="userimages" src="{{ url_for('uploaded_file', filename=profile_updates.profile_pic) }}" alt="Profile Picture">
+                    {% else %}
+                        <a href="/profile" class="bi bi-person-fill"></a>
+                    {% endif %}
+                </a>
+            </div>
+            <p>{{ profile_updates.user.username }}</p>
+        </div> 
+        {% if profile_updates%}
+            <!-- Check if the profile picture was updated within the last 5 minutes -->
+            {% if datetime.now() - profile_updates.timestamp <= timedelta(minutes=5) %}
+                <p>{{ profile_updates.user.username }} updated profile photo at {{ profile_updates.timestamp.strftime('%Y-%m-%d %H:%M') }} </p>
+            {% endif %}
+            <!-- Use the template variable to set the profile picture size -->
+            <img src="{{ url_for('uploaded_file', filename=profile_updates.profile_pic) }}" width="{{ profile_pic_size }}px" height="{{ profile_pic_size }}px">
+            <div class="upinteract">
+                <a class="like-button" data-id="{{ profile_updates.id }}">
+                    <i class="bi bi-hand-thumbs-up"></i><span>like</span>
+                </a>
+                <a href="/commentdetails/{{update.id }}">
+                    <span>Comments</span>
+                </a>
+                <a href="#">
+                    <span>endorse</span>
+                </a>
+            </div>
+            <form action="/commentdetails/{{ update.id }}" method="post">
+              <input type="text" name="comment" id="comment">
+              <input type="submit" value="comment">
+            </form>
+           
+        
+        {% endif %}
+    </div>
+{% endif %}
+
+<div class="comment">
+{% for comment in comments %}
+
+    <p>{{ comment.text }}   <br>  <span>{{ comment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span></p>
+
+
+{% endfor %}
+</div>
+
+</div>
+<div class="sec">
+</div>
+
+
+
+
+</body>
+<script></script>
+</html>

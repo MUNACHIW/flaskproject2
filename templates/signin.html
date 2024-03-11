@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='image/icons8-facebook-48.png') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap-icons/bootstrap-icons.css')}}">
+    <title>Signin</title>
+</head>
+<body>
+    <div class=" container-fluid  formnav d-flex justify-content-evenly  align-items-center ">
+      <div class="facebooksign justify-content-center ">
+           <H4 class="m-2 text-white fs-1  ">facebook</H4>
+           <a href="/signup" class="bg-success fw-bold ">Sign Up</a>
+      </div>
+      <div class="facebooksign">
+        <form action="/signin" class="d-flex " method="POST">
+           <div class="m-2">
+            <label class=" mb-2 text-white ">username</label><br>
+            <input type="username" name = "username" placeholder="username">
+           </div>
+           <div class="m-2">
+            <label for="" class=" mb-2  text-white">password</label><br>
+           <input type = "password" name = "password" placeholder=" password">
+           <input type="submit" class="submit" value="Log in">
+           </div>
+        </form>
+      </div>
+    </div>
+
+<section class="signin">
+    <div class="exclamation mt-5 mt-5">
+        <div class="init">
+          <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <span class=" mx-1 ">You must login to continue.</span>
+    </div>
+    <form action="/signin" class="signinform" method = "POST">
+       <p>Log in to Facebook</p> 
+       <input type="text" name="username" id="" placeholder="username or email address">
+       <input type="password" name="password" id="password" placeholder="password">
+       <button type="submit">Log In</button>
+       <a href="/forgot-password">Forgotten Password ?</a>
+       <a href="/signup" class=" bg-success  p-2 fw-bold  text-white">Create new account</a>
+    </form>
+
+
+</section>
+</body>
+<script src="{{url_for('static', filename='script.js')}}"></script>
+</html>

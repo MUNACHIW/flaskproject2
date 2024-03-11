@@ -1,0 +1,139 @@
+<!-- User Profile -->
+{% for user in users %}
+<div class="user-profile" data-user-id="{{ user.id }}">
+  <h2>{{ user.username }}</h2>
+  {% if profile  %}
+    <img src="{{url_for('uploaded_file', filename='profile.profile_pic')}}" height="50px" width="50px"/>
+  {% endif %}
+  <!-- Other user details -->
+  <button class="send-friend-request">Send Friend Request</button>
+  <button class="remove-friend">Remove Friend</button>
+  <!-- Display profile updates -->
+  {% for info in profile_info %}
+    {% if info.startswith(user.username) %}
+    <p>{{ info }}</p>
+    {% endif %}
+  {% endfor %}
+  <!-- Display cover updates -->
+  {% for info in cover_info %}
+    {% if info.startswith(user.username) %}
+    <p>{{ info }}</p>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endfor %}
+
+<script src="{{ url_for('static', filename='jquery-3.7.1.min.js') }}"></script>
+<script>
+  $(document).ready(function(){
+    // Load button states from localStorage
+    $('.user-profile').each(function() {
+      var userId = $(this).data('user-id');
+      var sendFriendRequestButton = $(this).find('.send-friend-request');
+      var removeFriendButton = $(this).find('.remove-friend');
+      if(localStorage.getItem('friendRequestSent' + userId)) {
+        sendFriendRequestButton.text('Friend Request Sent');
+        sendFriendRequestButton.css('background-color', '#00FF00');
+        removeFriendButton.text('Remove Friend');
+        removeFriendButton.css('background-color', '');
+      }
+      if(localStorage.getItem('friendRemoved' + userId)) {
+        removeFriendButton.text('Removed Friend');
+        removeFriendButton.css('background-color', '#FF0000');
+        sendFriendRequestButton.text('Send Friend Request');
+        sendFriendRequestButton.css('background-color', '');
+      }
+    });
+  
+    $('.send-friend-request').click(function(){
+      var userId = $(this).parent().data('user-id');
+      var button = $(this);
+      $.ajax({
+        url: '/add_friend/' + userId,
+        type: 'POST',
+        success: function(response){
+          alert(response.message);
+          button.text('Friend Request Sent');
+          button.css('background-color', '#00FF00');
+          // Save button state to localStorage
+          localStorage.setItem('friendRequestSent' + userId, true);
+          localStorage.removeItem('friendRemoved' + userId);
+          // Reset remove friend button
+          var removeFriendButton = button.siblings('.remove-friend');
+          removeFriendButton.text('Remove Friend');
+          removeFriendButton.css('background-color', '');
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
+  
+    $('.remove-friend').click(function(){
+      var userId = $(this).parent().data('user-id');
+      var button = $(this);
+      $.ajax({
+        url: '/remove_friend/' + userId,
+        type: 'POST',
+        success: function(response){
+          alert(response.message);
+          button.text('Removed Friend');
+          button.css('background-color', '#FF0000');
+          // Save button state to localStorage
+          localStorage.setItem('friendRemoved' + userId, true);
+          localStorage.removeItem('friendRequestSent' + userId);
+          // Reset send friend request button
+          var sendFriendRequestButton = button.siblings('.send-friend-request');
+          sendFriendRequestButton.text('Send Friend Request');
+          sendFriendRequestButton.css('background-color', '');
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
+  });
+
+
+  $(document).ready(function(){
+    // Load button states from server
+    $('.user-profile').each(function() {
+      var userId = $(this).data('user-id');
+      $.ajax({
+        url: '/get_friendship_status/' + userId,
+        type: 'GET',
+        success: function(response){
+          var userProfile = $(this);
+          var sendFriendRequestButton = userProfile.find('.send-friend-request');
+          var removeFriendButton = userProfile.find('.remove-friend');
+          if(response.friendshipStatus == 'requested') {
+            sendFriendRequestButton.text('Friend Request Sent');
+            sendFriendRequestButton.css('background-color', '#00FF00');
+          } else if(response.friendshipStatus == 'friends') {
+            removeFriendButton.text('Remove Friend');
+            removeFriendButton.css('background-color', '#FF0000');
+            // Add a "Friends" button if it doesn't exist
+            if(userProfile.find('.friends-button').length == 0) {
+              var friendsButton = $('<button>').addClass('friends-button').text('Friends');
+              userProfile.append(friendsButton);
+            }
+          }
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
+  
+    // Rest of your code...
+});
+
+  
+  
+  
+  
+</script>
+
+
+
+  
